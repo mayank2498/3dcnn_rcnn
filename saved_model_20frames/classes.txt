@@ -1,0 +1,17 @@
+F-Placing-Fixin
+A-Sittin
+A-Standin
+C-Compactin
+A-Transportin
+F-Machinin
+C-Transportin
+R-Transportin
+C-Placin
+C-Levelin
+A-Taking-Droppin
+F-Transportin
+A-Preparin
+R-Machinin
+A-Checkin
+A-Movin
+R-Placing-Fixin
