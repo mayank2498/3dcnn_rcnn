@@ -82,6 +82,8 @@ def display_instances(image, boxes, masks, ids, names, scores, frames, cnn3d,lin
         if (ids[i]==1):
             print("found human ")
             activity_frames = []
+            if(len(frames) != 20 ):
+              return
             for i in range(20):
                 if( frames[i] is not None ):
                     crop_img = frames[i][y1:y2, x1:x2]
@@ -133,7 +135,7 @@ def get_activity_prediction(model,lines,frames,width,height,depth):
     return classid,lines[classid][:-1],y[0][classid]*100
 
 # We use a K80 GPU with 24GB memory, which can fit 3 images.
-batch_size = 20
+batch_size = 5
 
 ROOT_DIR = os.getcwd()
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
@@ -174,7 +176,7 @@ class_names = [
 ]
 activity_model,lines = get_activity_model()
 
-capture = cv2.VideoCapture(os.path.join(VIDEO_DIR, 'worker_all_yolo.avi'))
+capture = cv2.VideoCapture(os.path.join(VIDEO_DIR, 'videoplayback.mp4'))
 try:
     if not os.path.exists(VIDEO_SAVE_DIR):
         os.makedirs(VIDEO_SAVE_DIR)
@@ -183,8 +185,8 @@ except OSError:
 frames = []
 frame_count = 0
 # these 2 lines can be removed if you dont have a 1080p camera.
-capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+capture.set(cv2.CAP_PROP_FRAME_WIDTH, 500)
+capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 500)
 
 while True:
     ret, frame = capture.read()
@@ -196,10 +198,10 @@ while True:
     frame_count += 1
     frames.append(frame)
     print('frame_count :{0}'.format(frame_count))
-    if len(frames) == batch_size:
-        results = model.detect(frames, verbose=0)
+    if len(frames) == 4*batch_size:
+        results = model.detect(frames[0:5], verbose=0)
         print('Predicted')
-        for i, item in enumerate(zip(frames, results)):
+        for i, item in enumerate(zip(frames[0:5], results)):
             frame = item[0]
             r = item[1]
             frame = display_instances(
